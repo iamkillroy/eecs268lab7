@@ -28,6 +28,9 @@ class BinaryNode:
 class BinaryTree:
     def __init__(self):
         self._adam = None
+        self.preOrder = "pre"
+        self.inOrder = "in"
+        self.postOrder = "post"
     def add(self, entry) -> None:
         """Adds to binary tree, allows skewed"""
         userEntryNode = BinaryNode(entry)
@@ -47,11 +50,13 @@ class BinaryTree:
                 previousBNode = currentBNode
                 #decide what direction we go into based on the size
                 #we're using integers for the first lab so this works
-                if currentBNode.get_entry() >= userEntryNode.get_entry():
-                    #right leaning >=
+                if currentBNode.get_entry() > userEntryNode.get_entry():
+                    #right leaning >
                     currentBNode = currentBNode.get_branch("right")
-                else:
+                elif currentBNode.get_entry() < userEntryNode.get_entry():
                     currentBNode = currentBNode.get_branch("left") #lower value so left >
+                elif currentBNode.get_entry() == userEntryNode.get_entry():
+                    raise Exception("Duplicates not allowed as per the rule of Rex Noster Gibbons. Long live the king!!!")
             #we've broken out of the loop!!!
             #now we know that the result of the currentNode is undefined
             #so we wanna go back and see what branch (left, right) we should 
@@ -63,3 +68,35 @@ class BinaryTree:
             else: #if it's left go left
                 previousBNode.set_branch("left", userEntryNode)
             return None
+    def display(self, method):
+        """Displays the node by returning a string in the method they want"""
+        ###okay this is gonna get hard
+        #we gotta traverse the tree to start with at the left most nth element up till the parent
+        leftMostBNode = self._adam
+        rightMostBNode = self._adam
+        allLeftNodes = []
+        allRightNodes = []
+        #traverse the binary tree until the leftmost node tree occurs
+        #this happens by checking if there's a new node in the left branch
+        #and if not, just deferring left every time
+        while hasattr(self._adam.get_branch("left"), "_left"):
+            allLeftNodes.append(leftMostNode)
+            leftMostBNode = leftMostBNode.get_branch("left")
+        #we're going to do the same thing for the right now
+        while hasattr(self._adam.get_branch("right", "_right"):
+            allRightNodes.append(rightMostNode)
+            rightMostBNode = rightMostBNode.get_branch("right")
+        #okay so now we have all leftmost nodes in a list
+        #and all rightmost nodes in a list and the best way that we
+        #can display them is by traversing them and displaying them in a string
+        levelStringListLeft = []
+        levelStringListRight = []
+        #okay now we gotta flip the lists over so we can start with the bottom and go 
+        #up to the top
+        allLeftNodes.reverse()
+        allRightNodes.reverse()
+        for leftNodeAtLayer in allLeftNodes:
+            if leftNodeAtLayer == 1:
+
+        if method == self.pre:
+            pass
