@@ -10,6 +10,12 @@ class BinaryNode:
         else: return False
     def get_entry(self):
         return self._entry
+    def has_branch(self, branchDirection: str):
+        if branchDirection == "left" and self._left != None:
+            return True
+        if branchDirection == "right" and self._right != None:
+            return True
+        return False #else
     def get_branch(self, branchDirection: str):
         if branchDirection == "left":
             return self._left
@@ -83,7 +89,7 @@ class BinaryTree:
             allLeftNodes.append(leftMostNode)
             leftMostBNode = leftMostBNode.get_branch("left")
         #we're going to do the same thing for the right now
-        while hasattr(self._adam.get_branch("right", "_right"):
+        while hasattr(self._adam.get_branch("right", "_right")):
             allRightNodes.append(rightMostNode)
             rightMostBNode = rightMostBNode.get_branch("right")
         #okay so now we have all leftmost nodes in a list
@@ -95,8 +101,34 @@ class BinaryTree:
         #up to the top
         allLeftNodes.reverse()
         allRightNodes.reverse()
-        for leftNodeAtLayer in allLeftNodes:
-            if leftNodeAtLayer == 1:
-
+        #so the level string represents where we are at the level
+        #starts at 0 and goes up to n levels to the adam of the binary tree
+        #when we find the leftmost node value has a right node,
+        #we go down levelInt-1. assume that the right node also has a left
+        #node that we didn't catch (allLeftNodes are only leftmostnodes) then
+        #we go down another level up until there's nothing, and then come back up
+        for levelInt, leftNodeAtLayer in enumerate(allLeftNodes):
+            #the current levelString is equal to the leftnode at layer
+            #remember for each level of recursion this would be the tallest layer
+            #we can only go down from here so it's okay to just say this is the top
+            levelStringListLeft[levelInt] = "("+leftNodeAtLayer.get_entry()+")"
+            if not leftNodeAtLayer.is_leaf(): 
+                #check to see if there's no child nodes to display
+                #if this is true then there's either a left or right
+                #bnode to display
+                moreBranchesToFind = False
+                leftNodeDeeper = leftNodeAtLayer
+                while not moreBranchesToFind:
+                    bottomBranchEntry = ""
+                    layerDownLevelInt = levelInt - 1 #let's go one layer down
+                    if leftNodeDeeper.has_branch("left"):
+                        bottomBranchEntry = bottomBranchEntry + "(" +leftNodeAtLayer.get_branch("left").get_entry() + ")"
+                    if leftNodeDeeper.has_branch("right"):
+                        bottomBranchEntry = bottomBranchEntry + "(" + leftNodeAtLayer.get_branch("right").get_entry() + ")"
+                    #now that we've added all of the branches at this level let's see
+                    #if there's a further level for us to scan
+                    if not leftNodeDeeper.get_branch("right").is_leaf() or not leftNodeDeeper.get_branch("left").is_leaf():
+                        #this means that the ends of those nodes aren't actually the ends. we go deeper to each of them
+                        pass
         if method == self.pre:
             pass
