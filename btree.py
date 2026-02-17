@@ -6,7 +6,7 @@ class BinaryNode:
         self._left = None
         self._entry = entry
     def is_leaf(self):
-        if self.right == None and self.left == None: return True
+        if self._right== None and self._left == None: return True
         else: return False
     def get_entry(self):
         return self._entry
@@ -37,11 +37,11 @@ class BinaryTree:
         self.preOrder = "pre"
         self.inOrder = "in"
         self.postOrder = "post"
+        self.deepest = 0
     def add(self, entry) -> None:
         """Adds to binary tree, allows skewed"""
         userEntryNode = BinaryNode(entry)
         if self._adam == None:
-            print("set ada")
             self._adam = userEntryNode
             return None
         else: 
@@ -50,19 +50,26 @@ class BinaryTree:
             #like (n * n!) O time (especially in Python) so we're looping
             currentBNode = self._adam
             previousBNode = None
+            deepestInFunction = 0
             #while the currentBNode is actually a BNode
             while hasattr(currentBNode, "_entry"):
+                if deepestInFunction == self.deepest+1:
+                    self.deepest += 1 #increase deepest amount
                 #previous was the former current
                 previousBNode = currentBNode
                 #decide what direction we go into based on the size
                 #we're using integers for the first lab so this works
                 if currentBNode.get_entry() > userEntryNode.get_entry():
                     #right leaning >
+                    print("chose right")
                     currentBNode = currentBNode.get_branch("right")
                 elif currentBNode.get_entry() < userEntryNode.get_entry():
+                    print("chose left")
                     currentBNode = currentBNode.get_branch("left") #lower value so left >
                 elif currentBNode.get_entry() == userEntryNode.get_entry():
                     raise Exception("Duplicates not allowed as per the rule of Rex Noster Gibbons. Long live the king!!!")
+
+                deepestInFunction += 1 #we've finished one layer so far
             #we've broken out of the loop!!!
             #now we know that the result of the currentNode is undefined
             #so we wanna go back and see what branch (left, right) we should 
@@ -73,62 +80,48 @@ class BinaryTree:
                 previousBNode.set_branch("right", userEntryNode)
             else: #if it's left go left
                 previousBNode.set_branch("left", userEntryNode)
+            print(self.deepest)
             return None
-    def display(self, method):
+    def getAllNodesInTree(self, startNode: BinaryNode, binaryNodeList: list, levelBNL: int) -> list:
+        print(f"I'm at level {levelBNL}")
+        if startNode == None:
+            return [] #there's no left or right side return empty list
+        binaryNodeList[levelBNL].append(startNode)
+        if not startNode.is_leaf():
+            if startNode.has_branch("left"):
+                binaryNodeList = self.getAllNodesInTree(startNode.get_branch("left"), binaryNodeList, levelBNL+1)
+            if startNode.has_branch("right"):
+                binaryNodeList = self.getAllNodesInTree(startNode.get_branch("right"), binaryNodeList, levelBNL+1)
+        return binaryNodeList
+    def display(self, sortMethod):
         """Displays the node by returning a string in the method they want"""
-        ###okay this is gonna get hard
-        #we gotta traverse the tree to start with at the left most nth element up till the parent
-        leftMostBNode = self._adam
-        rightMostBNode = self._adam
-        allLeftNodes = []
-        allRightNodes = []
-        #traverse the binary tree until the leftmost node tree occurs
-        #this happens by checking if there's a new node in the left branch
-        #and if not, just deferring left every time
-        while hasattr(self._adam.get_branch("left"), "_left"):
-            allLeftNodes.append(leftMostNode)
-            leftMostBNode = leftMostBNode.get_branch("left")
-        #we're going to do the same thing for the right now
-        while hasattr(self._adam.get_branch("right", "_right")):
-            allRightNodes.append(rightMostNode)
-            rightMostBNode = rightMostBNode.get_branch("right")
-        #okay so now we have all leftmost nodes in a list
-        #and all rightmost nodes in a list and the best way that we
-        #can display them is by traversing them and displaying them in a string
-        levelStringListLeft = []
-        levelStringListRight = []
-        #okay now we gotta flip the lists over so we can start with the bottom and go 
-        #up to the top
-        allLeftNodes.reverse()
-        allRightNodes.reverse()
-        #so the level string represents where we are at the level
-        #starts at 0 and goes up to n levels to the adam of the binary tree
-        #when we find the leftmost node value has a right node,
-        #we go down levelInt-1. assume that the right node also has a left
-        #node that we didn't catch (allLeftNodes are only leftmostnodes) then
-        #we go down another level up until there's nothing, and then come back up
-        for levelInt, leftNodeAtLayer in enumerate(allLeftNodes):
-            #the current levelString is equal to the leftnode at layer
-            #remember for each level of recursion this would be the tallest layer
-            #we can only go down from here so it's okay to just say this is the top
-            levelStringListLeft[levelInt] = "("+leftNodeAtLayer.get_entry()+")"
-            if not leftNodeAtLayer.is_leaf(): 
-                #check to see if there's no child nodes to display
-                #if this is true then there's either a left or right
-                #bnode to display
-                moreBranchesToFind = False
-                leftNodeDeeper = leftNodeAtLayer
-                while not moreBranchesToFind:
-                    bottomBranchEntry = ""
-                    layerDownLevelInt = levelInt - 1 #let's go one layer down
-                    if leftNodeDeeper.has_branch("left"):
-                        bottomBranchEntry = bottomBranchEntry + "(" +leftNodeAtLayer.get_branch("left").get_entry() + ")"
-                    if leftNodeDeeper.has_branch("right"):
-                        bottomBranchEntry = bottomBranchEntry + "(" + leftNodeAtLayer.get_branch("right").get_entry() + ")"
-                    #now that we've added all of the branches at this level let's see
-                    #if there's a further level for us to scan
-                    if not leftNodeDeeper.get_branch("right").is_leaf() or not leftNodeDeeper.get_branch("left").is_leaf():
-                        #this means that the ends of those nodes aren't actually the ends. we go deeper to each of them
-                        pass
-        if method == self.pre:
-            pass
+        #make an empty list the depth length with lists in them
+        leftDepth = [[] for _ in range(self.deepest+1)]
+        rightDepth = [[] for _ in range(self.deepest+1)]
+        leftList = self.getAllNodesInTree(self._adam.get_branch("left"), leftDepth, 0)
+        rightList = self.getAllNodesInTree(self._adam.get_branch("right"), rightDepth, 0)
+        center = self._adam
+        listOfLeftNodes = [a for a in leftList]
+        print(listOfLeftNodes)
+        listOfRightNodes = [a for a in rightList]
+        match sortMethod:
+            case self.preOrder:
+                print("Center: " + self._adam.get_entry())
+                print("Left Nodes:", end="")
+                for leftLevelArray in listOfLeftNodes:
+                    for leftLANode in leftLevelArray:
+                        print("(" + str(leftLANode.get_entry()) + ")", end="")
+                print("\nRight Nodes:", end="")
+                for rightLevelArray in listOfRightNodes:
+                    for rightLANode in rightLevelArray:
+                        print("(" + str(rightLANode.get_entry()) + ")", end="")
+            case self.inOrder:
+                print("Left Nodes:", end="")                
+                for leftLevelArray in listOfLeftNodes:
+                    for leftLANode in leftLevelArray:
+                        print("(" + str(leftLANode.get_entry()) + ")", end="")
+                print("Center: " + self._adam.get_entry())                
+                print("\nRight Nodes:", end="")             
+                for rightLevelArray in listOfRightNodes:
+                    for rightLANode in rightLevelArray:
+                        print("(" + str(rightLANode.get_entry()) + ")", end="")
