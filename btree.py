@@ -61,10 +61,8 @@ class BinaryTree:
                 #we're using integers for the first lab so this works
                 if currentBNode.get_entry() > userEntryNode.get_entry():
                     #right leaning >
-                    print("chose right")
                     currentBNode = currentBNode.get_branch("right")
                 elif currentBNode.get_entry() < userEntryNode.get_entry():
-                    print("chose left")
                     currentBNode = currentBNode.get_branch("left") #lower value so left >
                 elif currentBNode.get_entry() == userEntryNode.get_entry():
                     raise Exception("Duplicates not allowed as per the rule of Rex Noster Gibbons. Long live the king!!!")
@@ -80,10 +78,8 @@ class BinaryTree:
                 previousBNode.set_branch("right", userEntryNode)
             else: #if it's left go left
                 previousBNode.set_branch("left", userEntryNode)
-            print(self.deepest)
             return None
     def getAllNodesInTree(self, startNode: BinaryNode, binaryNodeList: list, levelBNL: int) -> list:
-        print(f"I'm at level {levelBNL}")
         if startNode == None:
             return [] #there's no left or right side return empty list
         binaryNodeList[levelBNL].append(startNode)
@@ -102,11 +98,10 @@ class BinaryTree:
         rightList = self.getAllNodesInTree(self._adam.get_branch("right"), rightDepth, 0)
         center = self._adam
         listOfLeftNodes = [a for a in leftList]
-        print(listOfLeftNodes)
         listOfRightNodes = [a for a in rightList]
         match sortMethod:
             case self.preOrder:
-                print("Center: " + self._adam.get_entry())
+                print("Center: " + str(self._adam.get_entry()))
                 print("Left Nodes:", end="")
                 for leftLevelArray in listOfLeftNodes:
                     for leftLANode in leftLevelArray:
@@ -120,7 +115,7 @@ class BinaryTree:
                 for leftLevelArray in listOfLeftNodes:
                     for leftLANode in leftLevelArray:
                         print("(" + str(leftLANode.get_entry()) + ")", end="")
-                print("Center: " + self._adam.get_entry())                
+                print("Center: " + str(self._adam.get_entry()))               
                 print("\nRight Nodes:", end="")             
                 for rightLevelArray in listOfRightNodes:
                     for rightLANode in rightLevelArray:
